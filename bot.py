@@ -271,22 +271,18 @@ async def queue_full_page(client, callback_query):
     if user_id not in user_queues:
         user_queues[user_id] = asyncio.Queue()
 
-    seen_chapters = set()  
+    seen_chapters = set()
     unique_chapters = []
 
     for chap in chapters_data["chapters"]:
-        try:
-            chap_number = chap["chap"]
-    
-        except ValueError:
-            continue  # Skip if not a valid number
+        chap_number = str(chap["chap"])  # Keep as string to preserve decimal places
 
         if chap_number not in seen_chapters:
             seen_chapters.add(chap_number)
             unique_chapters.append((hid, chap["hid"], chap_number))
 
-    # Sort chapters numerically
-    unique_chapters.sort(key=lambda x: x[2])
+    # Sort chapters numerically while keeping decimal places
+    unique_chapters.sort(key=lambda x: float(x[2]))
 
     # Add sorted chapters to queue
     for chapter in unique_chapters:
@@ -294,7 +290,6 @@ async def queue_full_page(client, callback_query):
 
     if user_queues[user_id].qsize() == len(unique_chapters):
         asyncio.create_task(process_chapter_queue(user_id))
-        
     
 def download_and_convert_images(images, download_dir):
     image_files = []
