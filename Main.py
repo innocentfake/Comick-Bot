@@ -1,4 +1,3 @@
-from bot import start_bot
+from bot import Bot
 
-if __name__ == '__main__':
-    start_bot()
+Bot().run()
