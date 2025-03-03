@@ -2,9 +2,7 @@ import asyncio as aio
 from bot import *
 
 
-async def async_main():
-    db = DB()
-    await db.connect()
+async def async_main()
     
 if __name__ == '__main__':
     loop = aio.get_event_loop_policy().get_event_loop()
