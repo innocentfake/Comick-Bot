@@ -383,13 +383,13 @@ async def process_chapter_queue(user_id):
                 raise Exception("Failed to download any images.")
 
             # 🟢 Set filename with manga title
-            pdf_filename = f"[{sanitized_title}] Chapter {chap_num}.pdf"
+            pdf_filename = f"[MS] [{chap_num}] [{sanitized_title}] @Manga_Sect.pdf"
             pdf_path = os.path.join(download_dir, pdf_filename)
 
             create_pdf(image_files, pdf_path)
 
             # 🟢 Set caption with manga title
-            caption = f"<blockquote><b>[MS][{sanitized_title}] [{chap_num}] @Manga_Sect</b></blockquote>"
+            caption = f"<blockquote><b>[MS] [{chap_num}] [{sanitized_title}] @Manga_Sect</b></blockquote>"
 
             first_image = image_files[0]
             await bot.send_document(
