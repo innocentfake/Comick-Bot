@@ -396,7 +396,7 @@ async def process_chapter_queue(user_id):
                 chat_id=callback_query.message.chat.id,
                 document=pdf_path,
                 caption=caption,
-                thumb=thumb.path
+                thumb=thumb_path
             )
 
             shutil.rmtree(download_dir)
