@@ -18,7 +18,8 @@ import asyncio
 
 api_id = "20951184"  
 api_hash = "33da8f2403e95e6c2504a3c994223c73" 
-bot_token = "8000939036:AAG4QvUuv3F7shFX5EJCJeIdC9rfNWzKuI8" 
+bot_token = "8000939036:AAG4QvUuv3F7shFX5EJCJeIdC9rfNWzKuI8"
+dump_channel_id = "-1002284672284" # Replace with your dump channel ID
 
 # Initialize Bot
 bot = Client("comick_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
