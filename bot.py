@@ -16,9 +16,9 @@ import asyncio
 
 # Store queues for each user
 
-api_id =  
-api_hash = "" 
-bot_token = "" 
+api_id = 20951184
+api_hash = "33da8f2403e95e6c2504a3c994223c73" 
+bot_token = "8000939036:AAG4QvUuv3F7shFX5EJCJeIdC9rfNWzKuI8" 
 
 # Initialize Bot
 bot = Client("comick_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
@@ -53,7 +53,7 @@ def fetch_manga_chapters(hid, page):
 @bot.on_message(filters.command("start"))
 async def start(client, message):
     buttons = [
-        [InlineKeyboardButton("👨‍💻 Dev", url="https://t.me/r4h4t_69"),
+        [InlineKeyboardButton("🤩 Main Channel", url="https://t.me/Manga_Sect"),
          InlineKeyboardButton("ℹ️ Help", callback_data="help")],
         [InlineKeyboardButton("❌ Close", callback_data="close")]
     ]
@@ -81,7 +81,7 @@ async def help_menu(client, callback_query):
 @bot.on_callback_query(filters.regex("back"))
 async def back_to_start(client, callback_query):
     buttons = [
-        [InlineKeyboardButton("👨‍💻 Dev", url="https://t.me/r4h4t_69"),
+        [InlineKeyboardButton("🤩 Main Channel", url="https://t.me/Manga_Sect"),
          InlineKeyboardButton("ℹ️ Help", callback_data="help")],
         [InlineKeyboardButton("❌ Close", callback_data="close")]
     ]
@@ -383,20 +383,20 @@ async def process_chapter_queue(user_id):
                 raise Exception("Failed to download any images.")
 
             # 🟢 Set filename with manga title
-            pdf_filename = f"[{sanitized_title}] Chapter {chap_num}.pdf"
+            pdf_filename = f"[MS] [{chap_num}] {sanitized_title} @Manga_Sect.pdf"
             pdf_path = os.path.join(download_dir, pdf_filename)
 
             create_pdf(image_files, pdf_path)
 
             # 🟢 Set caption with manga title
-            caption = f"<blockquote><b>[{sanitized_title}] Chapter {chap_num} - @comick_dlbot</b></blockquote>"
+            caption = f"<blockquote><b>[MS] [{chap_num}] {sanitized_title} @Manga_Sect</b></blockquote>"
 
-            first_image = image_files[0]
+            thumb_path = "thumb.jpg"
             await bot.send_document(
                 chat_id=callback_query.message.chat.id,
                 document=pdf_path,
                 caption=caption,
-                thumb=first_image
+                thumb=thumb.path
             )
 
             shutil.rmtree(download_dir)
