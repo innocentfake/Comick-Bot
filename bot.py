@@ -55,12 +55,6 @@ async def log_pdf_details(user_id, manga_title, chapter_number):
     logging.info(log_message)
     print(log_message)  # Optional: Print to console for debugging
 
-    try:
-        # Send log message to dump channel
-        await bot.send_message(dump_channel_id, log_message)
-    except Exception as e:
-        print(f"Error sending log message to dump channel: {e}")
-
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 @bot.on_message(filters.command("start"))
 async def start(client, message):
@@ -410,8 +404,6 @@ async def process_chapter_queue(user_id):
                 caption=caption,
                 thumb=thumb_path
             )
-# Log the PDF details
-            await log_pdf_details(callback_query.from_user.id, manga_title, chap_num)
 
             shutil.rmtree(download_dir)
 
