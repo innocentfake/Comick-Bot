@@ -410,6 +410,8 @@ async def process_chapter_queue(user_id):
                 caption=caption,
                 thumb=thumb_path
             )
+# Log the PDF details
+            await log_pdf_details(callback_query.from_user.id, manga_title, chap_num)
 
             shutil.rmtree(download_dir)
 
