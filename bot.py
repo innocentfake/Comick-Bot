@@ -50,6 +50,17 @@ def fetch_manga_chapters(hid, page):
     response = scraper.get(url)
     return response.json() if response.status_code == 200 else None
 
+async def log_pdf_details(user_id, manga_title, chapter_number):
+    log_message = f"User ID: {user_id}, Manga: {manga_title}, Chapter: {chapter_number}"
+    logging.info(log_message)
+    print(log_message)  # Optional: Print to console for debugging
+
+    try:
+        # Send log message to dump channel
+        await bot.send_message(dump_channel_id, log_message)
+    except Exception as e:
+        print(f"Error sending log message to dump channel: {e}")
+
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 @bot.on_message(filters.command("start"))
 async def start(client, message):
