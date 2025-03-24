@@ -1,0 +1,5 @@
+#--- t.me/r4h4t_69 (RA H AT)
+#---Use This Build Command & Run Command When Deploying This Bot As Web Service(Koyeb/Render)---#
+
+build cmd : pip3 install -r requirements.txt
+run cmd: gunicorn app:app & python3 bot.py
