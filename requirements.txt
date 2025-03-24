@@ -3,5 +3,7 @@ tgcrypto
 cloudscraper
 pillow 
 bs4
-requirements 
 fpdf2
+gunicorn 
+flask
+
