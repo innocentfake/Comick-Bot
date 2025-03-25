@@ -7,4 +7,3 @@ bs4
 fpdf2
 gunicorn 
 flask
-shutil
