@@ -404,23 +404,27 @@ async def process_chapter_queue(user_id):
             caption = f"<blockquote><b>[MS] [{chap_num}] {sanitized_title} @Manga_Sect</b></blockquote>"
 
             thumb_path = "thumb.jpg"                     
-      message = await bot.send_document(
-        chat_id=callback_query.message.chat.id,
-        document=pdf_path,
-        caption=caption,
-        thumb=thumb_path
-    )
+        try:
+             # 🟢 Send the PDF file
+            message = await bot.send_document(
+            chat_id=callback_query.message.chat.id,
+            document=pdf_path,
+            caption=caption,
+            thumb=thumb_path
+            )
 
-    # Forward a copy to the dump channel
-    await bot.copy_message(
-        chat_id=dump_channel_id,
-        from_chat_id=message.chat.id,
-        message_id=message.id
-    )
+            # 🟢 Forward the message to the dump channel
+            await bot.copy_message(
+            chat_id=dump_channel_id,
+            from_chat_id=message.chat.id,
+            message_id=message.message_id  # Corrected attribute
+            )
 
-    shutil.rmtree(download_dir)
-
+           # 🟢 Clean up downloaded files
+           shutil.rmtree(download_dir)
+  
 except Exception as e:
+    # 🟢 Handle errors and send an alert message
     await callback_query.answer(f"Error: {str(e)}", show_alert=True)
         user_queues[user_id].task_done()
 
