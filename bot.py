@@ -1,4 +1,5 @@
 from pyrogram import Client, filters
+from pyrogram.types import message 
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ParseMode
 import cloudscraper
