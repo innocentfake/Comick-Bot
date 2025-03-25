@@ -404,8 +404,7 @@ async def process_chapter_queue(user_id):
             caption = f"<blockquote><b>[MS] [{chap_num}] {sanitized_title} @Manga_Sect</b></blockquote>"
 
             thumb_path = "thumb.jpg"                     
-        try:
-             # 🟢 Send the PDF file
+            # 🟢 Send the PDF file
             message = await bot.send_document(
             chat_id=callback_query.message.chat.id,
             document=pdf_path,
