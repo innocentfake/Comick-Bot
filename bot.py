@@ -51,7 +51,7 @@ def fetch_manga_chapters(hid, page):
     response = scraper.get(url)
     return response.json() if response.status_code == 200 else None
 
-async def log_pdf_details(user_id, manga_title, chapter_number):
+async def process_chapter_queue(user_id, manga_title, chapter_number):
     log_message = f"User ID: {user_id}, Manga: {manga_title}, Chapter: {chapter_number}"
     logging.info(log_message)
     print(log_message)  # Optional: Print to console for debugging
