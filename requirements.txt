@@ -7,3 +7,4 @@ bs4
 fpdf2
 gunicorn 
 flask
+Shutil
