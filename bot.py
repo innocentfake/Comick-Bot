@@ -350,8 +350,6 @@ def create_pdf(image_files, pdf_path):
     os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
     
     pdf.output(pdf_path, "F")  # Save PDF   
-    
-
 
 async def process_chapter_queue(user_id):
     while not user_queues[user_id].empty():
@@ -360,8 +358,7 @@ async def process_chapter_queue(user_id):
             break  
 
         comic_hid_full, chap_hid, chap_num, callback_query = match
-        chap_num = chap_num # Keep as integer 
-       
+        chap_num = chap_num  # Keep as integer 
 
         download_dir = os.path.join("downloads", f"{user_id}/{comic_hid_full}/{chap_num}")
         os.makedirs(download_dir, exist_ok=True)
@@ -383,7 +380,7 @@ async def process_chapter_queue(user_id):
             chapter_data = data['props']['pageProps']['chapter']
             images = chapter_data['md_images']
 
-            # 🟢 Extract the manga title
+            # Extract the manga title
             manga_title = chapter_data["md_comics"]["title"]
             sanitized_title = re.sub(r'[\\/*?:"<>|]', '', manga_title)  # Remove invalid characters
 
@@ -394,39 +391,42 @@ async def process_chapter_queue(user_id):
             if not image_files:
                 raise Exception("Failed to download any images.")
 
-            # 🟢 Set filename with manga title
+            # Set filename with manga title
             pdf_filename = f"[MS] [{chap_num}] {sanitized_title} @Manga_Sect.pdf"
             pdf_path = os.path.join(download_dir, pdf_filename)
 
             create_pdf(image_files, pdf_path)
 
-            # 🟢 Set caption with manga title
+            # Set caption with manga title
             caption = f"<blockquote><b>[MS] [{chap_num}] {sanitized_title} @Manga_Sect</b></blockquote>"
 
-            thumb_path = "thumb.jpg"                     
+            thumb_path = "thumb.jpg"
 
-    # 🟢 Send the PDF file
-    message = await bot.send_document(
-        chat_id=callback_query.message.chat.id,
-        document=pdf_path,
-        caption=caption,
-        thumb=thumb_path
-    )
+            # Send the PDF file
+            message = await bot.send_document(
+                chat_id=callback_query.message.chat.id,
+                document=pdf_path,
+                caption=caption,
+                thumb=thumb_path
+            )
 
-    # 🟢 Forward the message to the dump channel
-    await bot.copy_message(
-        chat_id=dump_channel_id,
-        from_chat_id=message.chat.id,
-        message_id=message.message_id  # Corrected attribute
-    )
+            # Forward the message to the dump channel
+            await bot.copy_message(
+                chat_id=dump_channel_id,
+                from_chat_id=message.chat.id,
+                message_id=message.message_id
+            )
 
-    # 🟢 Clean up downloaded files
-    shutil.rmtree(download_dir)
+            # Clean up downloaded files
+            shutil.rmtree(download_dir)
 
-except Exception as e:
-    # 🟢 Handle errors and send an alert message
-    await callback_query.answer(f"Error: {str(e)}", show_alert=True)
-    user_queues[user_id].task_done()  # Ensure correct indentation
+        except Exception as e:
+            # Handle errors and send an alert message
+            await callback_query.answer(f"Error: {str(e)}", show_alert=True)
+
+        finally:
+            user_queues[user_id].task_done()  # Ensure correct indentation
+            
 
 @bot.on_callback_query(filters.regex(r"images\|(.+)\|(.+)\|(\d+)"))
 async def send_chapter_images(client, callback_query):
