@@ -1,5 +1,5 @@
-from pyrogram import Client, filters 
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message 
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ParseMode
 import cloudscraper
 import json
@@ -16,10 +16,9 @@ import asyncio
 
 # Store queues for each user
 
-api_id = "20951184"  
+api_id = "20951184" 
 api_hash = "33da8f2403e95e6c2504a3c994223c73" 
-bot_token = "8000939036:AAG4QvUuv3F7shFX5EJCJeIdC9rfNWzKuI8"
-dump_channel_id = "-1002284672284" # Replace with your dump channel ID
+bot_token = "8000939036:AAG4QvUuv3F7shFX5EJCJeIdC9rfNWzKuI8" 
 
 # Initialize Bot
 bot = Client("comick_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
@@ -50,22 +49,11 @@ def fetch_manga_chapters(hid, page):
     response = scraper.get(url)
     return response.json() if response.status_code == 200 else None
 
-async def process_chapter_queue(user_id, manga_title, chapter_number):
-    log_message = f"User ID: {user_id}, Manga: {manga_title}, Chapter: {chapter_number}"
-    logging.info(log_message)
-    print(log_message)  # Optional: Print to console for debugging
-
-    try:
-        # Send log message to dump channel
-        await bot.send_message(dump_channel_id, log_message)
-    except Exception as e:
-        print(f"Error sending log message to dump channel: {e}")
-
 #--------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 @bot.on_message(filters.command("start"))
 async def start(client, message):
     buttons = [
-        [InlineKeyboardButton("👨‍💻 Main Channel", url="https://t.me/Manga_Sect"),
+        [InlineKeyboardButton("🤩 Main Channel", url="https://t.me/Manga_Sect"),
          InlineKeyboardButton("ℹ️ Help", callback_data="help")],
         [InlineKeyboardButton("❌ Close", callback_data="close")]
     ]
@@ -93,7 +81,7 @@ async def help_menu(client, callback_query):
 @bot.on_callback_query(filters.regex("back"))
 async def back_to_start(client, callback_query):
     buttons = [
-        [InlineKeyboardButton("👨‍💻 Main Channel", url="https://t.me/Manga_Sect"),
+        [InlineKeyboardButton("🤩 Main channel", url="https://t.me/Manga_Sect"),
          InlineKeyboardButton("ℹ️ Help", callback_data="help")],
         [InlineKeyboardButton("❌ Close", callback_data="close")]
     ]
@@ -109,21 +97,21 @@ async def close(client, callback_query):
         await callback_query.message.delete()  # Deletes the message directly
     except Exception as e:
         print(f"Error deleting message: {e}")
-        
-        
+
+
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------#
 @bot.on_message(filters.command("queue") & filters.private)
 async def check_queue(client, message):
     user_id = message.from_user.id
-    
+
     # Get user queue size
     user_queue_size = user_queues[user_id].qsize() if user_id in user_queues else 0
-    
+
     # Get total global queue size
     global_queue_size = sum(q.qsize() for q in user_queues.values())
-    
+
     await message.reply_text(
         f"📌 **Queue Status:**\n\n"
         f"👤 **Your Queue:** {user_queue_size} chapter(s)\n"
@@ -135,7 +123,7 @@ async def manga_search(client, message):
 
     query = message.text.split(maxsplit=1)[1] if len(message.text.split()) > 1 else None
     if not query:
-        await message.reply_text("Please provide a manga title to search.\n <code>/manga Solo Leveling</code>")
+        await message.reply_text("Please provide a manga title to search.\n <code>/Solo Leveling</code>")
         return
     emojis = ["🥳", "🙂", "💅", "❤️", "👍", "💋", "😱", "⚡️", "🔥", "💸", "😘", "😁", "😜", "🥶", "🤯", "😈", "👾", "💦", "❣️", "🎉"]
     emoji = random.choice(emojis)
@@ -168,7 +156,7 @@ async def manga_details(client, callback_query):
         return
 
     data = fetch_manga_details(slug)
-    
+
     if data and "comic" in data:
         comic = data["comic"]
         title = comic.get("title", "N/A")
@@ -193,7 +181,7 @@ async def manga_details(client, callback_query):
         if len(description) > 500:
             description = description[:500] + "..."
         manga_type = {'kr': 'Manhwa', 'jp': 'Manga', 'cn': 'Manhua'}.get(country, 'N/A')
-        
+
         text = f"""
 <b>Title:</b> {title}
 <b>Type:</b> {manga_type}
@@ -210,7 +198,7 @@ async def manga_details(client, callback_query):
 """
 
         buttons = [[InlineKeyboardButton("📖 Chapters", callback_data=f"chapters|{hid}|1")]]
-        
+
         cover_url = f'https://meo.comick.pictures/{comic["md_covers"][0]["b2key"]}' if comic.get("md_covers") else None
         print(cover_url)
         if cover_url:
@@ -283,18 +271,22 @@ async def queue_full_page(client, callback_query):
     if user_id not in user_queues:
         user_queues[user_id] = asyncio.Queue()
 
-    seen_chapters = set()
+    seen_chapters = set()  
     unique_chapters = []
 
     for chap in chapters_data["chapters"]:
-        chap_number = str(chap["chap"])  # Keep as string to preserve decimal places
+        try:
+            chap_number = chap["chap"]
+
+        except ValueError:
+            continue  # Skip if not a valid number
 
         if chap_number not in seen_chapters:
             seen_chapters.add(chap_number)
             unique_chapters.append((hid, chap["hid"], chap_number))
 
-    # Sort chapters numerically while keeping decimal places
-    unique_chapters.sort(key=lambda x: float(x[2]))
+    # Sort chapters numerically
+    unique_chapters.sort(key=lambda x: x[2])
 
     # Add sorted chapters to queue
     for chapter in unique_chapters:
@@ -302,14 +294,15 @@ async def queue_full_page(client, callback_query):
 
     if user_queues[user_id].qsize() == len(unique_chapters):
         asyncio.create_task(process_chapter_queue(user_id))
-    
+
+
 def download_and_convert_images(images, download_dir):
     image_files = []
     for idx, img in enumerate(images, 1):
         image_url = f"https://meo.comick.pictures/{img['b2key']}"
         print(image_url)
         image_response = requests.get(image_url)
-        
+
         if image_response.status_code == 200:
             img_path = os.path.join(download_dir, f"{idx}.jpg")
             with open(img_path, 'wb') as img_file:
@@ -322,9 +315,9 @@ def download_and_convert_images(images, download_dir):
             except Exception as e:
                 print(f"Error converting image: {e}")
                 continue
-            
+
             image_files.append(img_path)
-    
+
     return image_files
 
 
@@ -336,7 +329,7 @@ def create_pdf(image_files, pdf_path):
             with Image.open(img_path) as img:
                 img = img.convert("RGB")  # Ensure RGB mode
                 width, height = img.size  # Get original dimensions
-                
+
                 # Add a page with the same dimensions as the image
                 pdf.add_page(format=(width, height))
 
@@ -348,8 +341,10 @@ def create_pdf(image_files, pdf_path):
 
     # Ensure directory exists before saving
     os.makedirs(os.path.dirname(pdf_path), exist_ok=True)
-    
+
     pdf.output(pdf_path, "F")  # Save PDF   
+
+
 
 async def process_chapter_queue(user_id):
     while not user_queues[user_id].empty():
@@ -358,7 +353,8 @@ async def process_chapter_queue(user_id):
             break  
 
         comic_hid_full, chap_hid, chap_num, callback_query = match
-        chap_num = chap_num  # Keep as integer 
+        chap_num = chap_num # Keep as integer 
+
 
         download_dir = os.path.join("downloads", f"{user_id}/{comic_hid_full}/{chap_num}")
         os.makedirs(download_dir, exist_ok=True)
@@ -380,7 +376,7 @@ async def process_chapter_queue(user_id):
             chapter_data = data['props']['pageProps']['chapter']
             images = chapter_data['md_images']
 
-            # Extract the manga title
+            # 🟢 Extract the manga title
             manga_title = chapter_data["md_comics"]["title"]
             sanitized_title = re.sub(r'[\\/*?:"<>|]', '', manga_title)  # Remove invalid characters
 
@@ -391,42 +387,29 @@ async def process_chapter_queue(user_id):
             if not image_files:
                 raise Exception("Failed to download any images.")
 
-            # Set filename with manga title
+            # 🟢 Set filename with manga title
             pdf_filename = f"[MS] [{chap_num}] {sanitized_title} @Manga_Sect.pdf"
             pdf_path = os.path.join(download_dir, pdf_filename)
 
             create_pdf(image_files, pdf_path)
 
-            # Set caption with manga title
+            # 🟢 Set caption with manga title
             caption = f"<blockquote><b>[MS] [{chap_num}] {sanitized_title} @Manga_Sect</b></blockquote>"
 
             thumb_path = "thumb.jpg"
-
-            # Send the PDF file
-            message = await bot.send_document(
+            await bot.send_document(
                 chat_id=callback_query.message.chat.id,
                 document=pdf_path,
                 caption=caption,
                 thumb=thumb_path
             )
 
-            # Forward the message to the dump channel
-            await bot.copy_message(
-                chat_id=dump_channel_id,
-                from_chat_id=message.chat.id,
-                message_id=message.message_id
-            )
-
-            # Clean up downloaded files
             shutil.rmtree(download_dir)
 
         except Exception as e:
-            # Handle errors and send an alert message
             await callback_query.answer(f"Error: {str(e)}", show_alert=True)
 
-        finally:
-            user_queues[user_id].task_done()  # Ensure correct indentation
-            
+        user_queues[user_id].task_done()
 
 @bot.on_callback_query(filters.regex(r"images\|(.+)\|(.+)\|(\d+)"))
 async def send_chapter_images(client, callback_query):
@@ -446,5 +429,6 @@ async def send_chapter_images(client, callback_query):
     # If queue was empty before, start processing
     if user_queues[user_id].qsize() == 1:
         asyncio.create_task(process_chapter_queue(user_id))
+
 
 bot.run()
