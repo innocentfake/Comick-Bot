@@ -58,10 +58,10 @@ async def start(client, message):
         [InlineKeyboardButton("❌ Close", callback_data="close")]
     ]
 
-     image_url = "https://files.catbox.moe/455q5g.jpg"
-    sent_message = await message.reply_photo(
-        photo=image_url,
-        caption="👋 Welcome to the @Manga_Sect Search Bot!",
+    video_url = "https://envs.sh/w3g.mp4"
+    sent_message = await message.reply_video(
+        video=video_url,
+        caption="👋 Welcome to the Manga Search Bot!",
         reply_markup=InlineKeyboardMarkup(buttons)
     )
 
